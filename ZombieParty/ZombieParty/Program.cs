@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ZombieParty.Models;
+using ZombieParty.Models.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
