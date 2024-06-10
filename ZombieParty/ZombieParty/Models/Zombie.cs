@@ -24,7 +24,7 @@ namespace ZombieParty.Models
 
         //Propriété de navigationpour la relation 1 à plusieurs avec ZombieType
         [ValidateNever]
-        public virtual ZombieType ZombieType { get; set; }
+        public virtual ZombieType? ZombieType { get; set; }
 
 
         [Range(1, 20,ErrorMessage = "Entre 1 et 20")]

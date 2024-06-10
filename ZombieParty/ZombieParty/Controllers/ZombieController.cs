@@ -1,49 +1,58 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ZombieParty.Models;
+using ZombieParty.Models.Data;
+using ZombieParty.ViewModels;
 
 namespace ZombieParty.Controllers
 {
     public class ZombieController : Controller
     {
-        private BaseDonnees _baseDonnees { get; set; }
+        private readonly ZombiePartyDbContext _context;
 
-        public ZombieController(BaseDonnees baseDonnees)
+        public ZombieController(ZombiePartyDbContext context)
         {
-            _baseDonnees = baseDonnees;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            this.ViewBag.MaListe = _baseDonnees.Zombies.ToList();
-
-            return View();
+            List<Zombie> zombiesList = _context.Zombie.ToList();
+            return View(zombiesList);
         }
 
         public IActionResult Create()
         {
-            ViewBag.ZombieTypes = new SelectList(_baseDonnees.ZombieTypes.ToList(), "Id", "TypeName", null);
-            return View();
+            ZombieVM zombieVM = new ZombieVM();
+            zombieVM.ZombieTypeSelectList = _context.ZombieType.Select(t => new SelectListItem
+            {
+                Text = t.TypeName,
+                Value = t.Id.ToString()
+            }).OrderBy(t => t.Text);
+            return View(zombieVM);
+
         }
 
         [HttpPost]
-        public IActionResult Create(Zombie zombie)
+        public IActionResult Create(ZombieVM zombieVM)
         {
             //Si le modèle est valide le zombie est ajouté et nous sommes redirigé vers index.
             if (ModelState.IsValid)
             {
-                _baseDonnees.Zombies.Add(zombie);
-                TempData["Success"] = $"Zombie {zombie.Name} added";
+                _context.Zombie.Add(zombieVM.Zombie);
+                _context.SaveChanges();
+                TempData["Success"] = $"Zombie {zombieVM.Zombie.Name} added";
                 return this.RedirectToAction("Index");
             }
-            //Il faut repopuler le zombieType dans le ViewBag
-            //Aller chercher le ZombieType sélectionné, rappel 2W5 Linq
-            ZombieType selectedZombieType = _baseDonnees.ZombieTypes.Where(zt => zt.Id == zombie.ZombieTypeId).SingleOrDefault();
-            zombie.ZombieType = selectedZombieType;
+            zombieVM.ZombieTypeSelectList = _context.ZombieType.Select(t => new SelectListItem
+            {
+                Text = t.TypeName,
+                Value = t.Id.ToString()
+            }).OrderBy(t => t.Text);
 
-            ViewBag.ZombieTypes = new SelectList(_baseDonnees.ZombieTypes.ToList(), "Id", "TypeName", selectedZombieType);
 
-            return View(zombie);
+            return View(zombieVM);
         }
 
     }
