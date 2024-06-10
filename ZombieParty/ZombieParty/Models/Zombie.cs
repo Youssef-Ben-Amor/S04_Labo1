@@ -33,5 +33,8 @@ namespace ZombieParty.Models
 
         [MaxLength(255, ErrorMessage = "255 charchtères Maximum")]
         public string ShortDEsc { get; set; }
+
+
+        public List<HuntingLog> HuntingLogs { get; set;}    
     }
 }

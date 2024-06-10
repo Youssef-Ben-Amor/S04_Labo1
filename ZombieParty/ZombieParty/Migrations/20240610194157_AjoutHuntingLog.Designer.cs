@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZombieParty.Models.Data;
 
@@ -10,9 +11,10 @@ using ZombieParty.Models.Data;
 namespace ZombieParty.Migrations
 {
     [DbContext(typeof(ZombiePartyDbContext))]
-    partial class ZombiePartyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240610194157_AjoutHuntingLog")]
+    partial class AjoutHuntingLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,21 +22,6 @@ namespace ZombieParty.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("HuntingLogZombie", b =>
-                {
-                    b.Property<int>("HuntingLogsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ZombieId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HuntingLogsId", "ZombieId");
-
-                    b.HasIndex("ZombieId");
-
-                    b.ToTable("HuntingLogZombie");
-                });
 
             modelBuilder.Entity("ZombieParty.Models.HuntingLog", b =>
                 {
@@ -105,21 +92,6 @@ namespace ZombieParty.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ZombieType");
-                });
-
-            modelBuilder.Entity("HuntingLogZombie", b =>
-                {
-                    b.HasOne("ZombieParty.Models.HuntingLog", null)
-                        .WithMany()
-                        .HasForeignKey("HuntingLogsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ZombieParty.Models.Zombie", null)
-                        .WithMany()
-                        .HasForeignKey("ZombieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ZombieParty.Models.Zombie", b =>
